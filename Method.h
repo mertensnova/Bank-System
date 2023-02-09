@@ -6,7 +6,8 @@
 
 
 void account_create();
-// void show_create();
+void menu();
+void account_view_all();
 // void delete_create();
 
 
