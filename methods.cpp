@@ -33,10 +33,12 @@ void menu()
 
 void account_create()
 {
-    ofstream fp_obj;
-    fp_obj.open("Accounts.dat",ios::app);
-    
+    // fsstream fp_obj;
+    char *x;
     Person account;
+    ofstream file("Accounts.txt");
+    if (!file.is_open())
+        cout << "File not open\n";
 
     time_t now = time(0);
     char* dt = ctime(&now);
@@ -53,26 +55,28 @@ void account_create()
     cin >> account.balance;
 
     cout << "Created at: " << dt;
-    account.created_at  = dt;    
+    account.created_at  = dt;  
 
-    fp_obj.write((char*)&account,sizeof(account));
-
-    fp_obj.close();
+    file >> account.name;
+    
+    file.close();
+    
+  
 }
 
 void account_view_all()
 {
     Person account;
     ifstream fp_obj;
-    fp_obj.open("Accounts.dat",ios::app);
-    fp_obj.read((char*)&account, sizeof(account));
-    fp_obj.seekg(0);
-    cout << "\t\t----------------------------------------- \n";
-    cout << "\t\tAccount's ID: " << account.id << endl;
-    cout << "\t\tAccount's name: " << account.name << endl;
-    cout << "\t\tAccount's balance: $" << account.balance << endl;
-    cout << "\t\tMember since: " << account.created_at << endl;
-    fp_obj.close();  
+    fstream file("Accounts.dat",ios::in);
+    if (!file.is_open())
+        cout << "File not open\n";
+    do
+    {
+        getline(file,account.name, '\0');
+        file.read((char *)&account.balance,sizeof(account.balance));
+    } while (!file.eof());
+    file.close();
     
 }
 

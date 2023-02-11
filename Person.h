@@ -8,7 +8,7 @@ class Person {
         int id;
         std::string name;
         int pin;
-        double balance;
+        long double balance;
         std::string created_at;
         
         void deposit(double amount)
