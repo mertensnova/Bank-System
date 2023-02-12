@@ -4,7 +4,7 @@
 #include <fstream>
 #include <cstring>
 #include "Account.h"
-#include "Methods.h"
+#include "Bank.h"
 
 using namespace std;
 
