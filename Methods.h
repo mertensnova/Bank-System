@@ -4,10 +4,11 @@
 #include <ctime>
 
 
-// void account_create();
 void menu();
+void account_create();
 void account_view_all();
-// void delete_create();
+void account_search();
+void account_deletion();
 
 
 #endif
