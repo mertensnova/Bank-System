@@ -4,7 +4,7 @@
 #include <ctime>
 
 class Person {
-    public:
+    private:
         int id;
         std::string name;
         int pin;
@@ -28,6 +28,33 @@ class Person {
             std::cout << "You withdrawed: " << amount << std::endl;
             std::cout << "Your balance: " << balance << std::endl;
         }
+    
+    public:
+        void account_create()
+        {
+            time_t now = time(0);
+            char* dt = ctime(&now);
+            tm *gmtm = gmtime(&now);
+            dt = asctime(gmtm);
+
+            std::cout << "Name: ";
+            getline(std::cin >> std::ws, name);
+    
+            std::cout << "Pin: ";
+            std::cin >> pin;
+    
+            std::cout << "Deposit: ";
+            std::cin >> balance;
+
+            std::cout << "Created at: " << dt;
+            created_at  = dt;  
+	    }
+         void account_view()
+        {
+            std::cout << "Account's name: " << name << std::endl
+            << "Account's balance: $" << balance << std::endl
+            << "Member since: " << created_at << std::endl;
+	    }
 };
 
 #endif

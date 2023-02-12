@@ -33,51 +33,40 @@ void menu()
 
 void account_create()
 {
-    // fsstream fp_obj;
-    char *x;
     Person account;
-    ofstream file("Accounts.txt");
-    if (!file.is_open())
-        cout << "File not open\n";
+    fstream fp_obj;
 
-    time_t now = time(0);
-    char* dt = ctime(&now);
-    tm *gmtm = gmtime(&now);
-    dt = asctime(gmtm);
-
-    cout << "Name: ";
-    getline(cin >> ws, account.name);
-    
-    cout << "Pin: ";
-    cin >> account.pin;
-    
-    cout << "Deposit: ";
-    cin >> account.balance;
-
-    cout << "Created at: " << dt;
-    account.created_at  = dt;  
-
-    file >> account.name;
-    
-    file.close();
-    
+    account.account_create();
   
+    fp_obj.open("Accounts.dat",ios::out|ios::binary);
+    if (!fp_obj)
+        cout << "File not open\n";
+    
+
+    
+    fp_obj.write((char*)&account,sizeof(account));
+    
+    fp_obj.close();   
+
 }
 
 void account_view_all()
 {
+    ifstream fp_obj; 
     Person account;
-    ifstream fp_obj;
-    fstream file("Accounts.dat",ios::in);
+    // fp_obj.open("Accounts.dat",ios::out|ios::binary);
+    fstream file("Accounts.dat",ios::in|ios::binary);
     if (!file.is_open())
         cout << "File not open\n";
-    do
-    {
-        getline(file,account.name, '\0');
-        file.read((char *)&account.balance,sizeof(account.balance));
-    } while (!file.eof());
-    file.close();
     
+    if (file.read((char*)&account,sizeof(account)))
+    {
+        account.account_view();
+    }	
+
+    else
+		cout<<"Error in reading data from file...\n";
+    
+    fp_obj.close();  
+
 }
-
-
