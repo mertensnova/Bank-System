@@ -28,6 +28,8 @@ void menu()
       case 1:
          account_create();
          break;
+      case 2:
+         account_login();
       case 3:
          account_view_all();
          break;
@@ -38,7 +40,8 @@ void menu()
          account_deletion();
          break;
      default:
-        break;
+         std::cout << "Invalid choice..." << std::endl;
+         break;
      }
 }
 
@@ -106,8 +109,8 @@ void account_search()
    {
       if (choice == person.id)
       {
-         std::cout << "Account found";
          std::cout << "*******************************************" << std::endl;
+         std::cout << "Account found" << std::endl;
          std::cout << "Account's ID: " << person.id << std::endl
          << "Account's name: " << person.name << std::endl
          << "Account's balance: $" << person.balance << std::endl
@@ -144,10 +147,41 @@ void account_deletion()
 
    fp.close();
    tmp.close();
+
    int status = remove("Accounts.dat");
-   if(status==0) cout<<"\nFile Deleted Successfully!";
+   if(status == 0) cout<<"\nFile Deleted Successfully!";
    else cout<<"\nError Occurred!";
 
    if (rename("tmp.dat", "Accounts.dat") != 0) perror("Error renaming file\n");
 	else cout << "File renamed successfully";
+}
+
+void account_login()
+{
+   int choice;
+   int found = 0;
+   Account person;
+   std::ifstream fp("Accounts.dat");
+   std::cout << "Enter ID number :";
+   std::cin >> choice;
+
+   while (fp.read((char *)&person,sizeof(person))) if (choice == person.id) found = 1;
+
+   if (found)
+   {
+      int pin;
+      std::cout << "Account found" << std::endl;
+      std:: cout << "Enter pin number" << std::endl;
+      std::cin >> pin;
+      std::cout << "Checking...." << std::endl;
+      if (pin == person.pin)
+      {
+         std::cout << "Pin correct" << std::endl;
+         person.menu(person.balance);
+      }
+      else std::cout << "Wrong pin number. Please try again..." << std::endl;
+   }
+   else std::cout << "Account not found..." << std::endl;
+      
+   fp.close();
 }
