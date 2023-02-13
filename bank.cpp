@@ -1,4 +1,5 @@
 #include <iostream>
+#include <conio.h>
 #include <ctime>
 #include <random>
 #include <fstream>
@@ -30,6 +31,7 @@ void menu()
          break;
       case 2:
          account_login();
+         break;
       case 3:
          account_view_all();
          break;
@@ -149,7 +151,7 @@ void account_deletion()
    tmp.close();
 
    int status = remove("Accounts.dat");
-   if(status == 0) cout<<"\nFile Deleted Successfully!";
+   if(status == 0) cout <<"\nFile Deleted Successfully!" << std::endl;
    else cout<<"\nError Occurred!";
 
    if (rename("tmp.dat", "Accounts.dat") != 0) perror("Error renaming file\n");
@@ -177,11 +179,40 @@ void account_login()
       if (pin == person.pin)
       {
          std::cout << "Pin correct" << std::endl;
-         person.menu(person.balance);
+         long double balance = person.menu();
+         fp.close();
+         account_update(choice,balance);
       }
+
       else std::cout << "Wrong pin number. Please try again..." << std::endl;
    }
    else std::cout << "Account not found..." << std::endl;
       
+}
+
+void account_update(int id,long double balance)
+{
+   Account person;
+   std::ifstream fp("Accounts.dat");
+   std::ofstream tmp("tmp.dat",std::ios::binary | std::ios::app);
+   int choice = id;
+
+   while (fp.read((char *)&person,sizeof(person)))
+   {
+      if (choice == person.id) 
+      {
+         person.balance = balance;
+         tmp.write((char*)&person,sizeof(person));
+      }
+   }
+
    fp.close();
+   tmp.close();
+
+   int status = remove("Accounts.dat");
+   if(status == 0) cout<<"\nFile Deleted Successfully!" << std::endl;
+   else cout<<"\nError Occurred!";
+
+   if (rename("tmp.dat", "Accounts.dat") != 0) perror("Error renaming file\n");
+	else cout << "File renamed successfully";
 }

@@ -13,7 +13,7 @@ class Account {
         long double balance;
         char created_at[100];
 
-        void menu(float balance)
+        long double menu()
         {
             int choice;
             std::cout << "What do you want to do?" << std::endl;
@@ -29,18 +29,19 @@ class Account {
                 show_balance();
                 break;
             case 2:
-                deposit();
+                balance = deposit();
                 break;
             case 3:
-                withdraw();  
+               balance = withdraw();  
                 break;          
             default:
                 std::cout << "Invalid choice" << std::endl;
                 break;
             }
+            return balance;
         }
 
-        void deposit()
+        long double deposit()
         {
             long double amount;
             std:: cout << "How much do you want to deposit?" << std::endl;
@@ -49,13 +50,14 @@ class Account {
             balance += amount;
             std::cout << "You deposited: $" << amount << std::endl;
             std::cout << "Your balance: $" << balance << std::endl;
+            return balance;
         }
         void show_balance()
         {
             std::cout << "Your balance: $" << balance << std::endl;
         }
 
-        void withdraw()
+        long double withdraw()
         {
             long double amount;
             std:: cout << "How much do you want to withdraw?" << std::endl;
@@ -63,8 +65,8 @@ class Account {
             balance -= amount;
             std::cout << "You withdrawed: $" << amount << std::endl;
             std::cout << "Your balance: $" << balance << std::endl;
+            return balance;
         }
-
 };
 
 #endif
