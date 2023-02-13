@@ -181,6 +181,7 @@ void account_login()
          cout << "Pin correct" << endl;
          long double balance = person.menu();
          fp.close();
+         account_update(choice,balance);
      
       }
 
