@@ -11,6 +11,7 @@ void account_view_all();
 void account_search();
 void account_deletion();
 void account_update(int id,long double balance);
+void account_transfer(int id,long double balance);
 
 
 #endif

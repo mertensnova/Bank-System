@@ -42,7 +42,7 @@ void menu()
          account_deletion();
          break;
      default:
-         std::cout << "Invalid choice..." << std::endl;
+         cout << "Invalid choice..." << endl;
          break;
      }
 }
@@ -51,11 +51,11 @@ void account_create()
 {
    Account person;
             
-   std::ofstream fp("Accounts.dat",std::ios::binary | std::ios::app);
+   ofstream fp("Accounts.dat",ios::binary | ios::app);
 
-   std::random_device dev;
-   std::mt19937 rng(dev());
-   std::uniform_int_distribution<std::mt19937::result_type> dist6(1,10000); 
+   random_device dev;
+   mt19937 rng(dev());
+   uniform_int_distribution<mt19937::result_type> dist6(1,10000); 
 
    time_t now = time(0);
    char* dt = ctime(&now);
@@ -63,20 +63,20 @@ void account_create()
    dt = asctime(gmtm);
 
    person.id = dist6(rng);
-   std::cout << "ID: " << person.id << std::endl;
+   cout << "ID: " << person.id << endl;
 
-   std::cin.ignore(1);
-   std::cout << "Name: ";
-   std::cin.getline(person.name,100);
+   cin.ignore(1);
+   cout << "Name: ";
+   cin.getline(person.name,100);
 
-   std::cout << "Pin: ";
-   std::cin >> person.pin;
+   cout << "Pin: ";
+   cin >> person.pin;
 
-   std::cout << "Deposit: ";
-   std::cin >> person.balance;
+   cout << "Deposit: ";
+   cin >> person.balance;
 
    strcpy(person.created_at,dt);
-   std::cout << "Created at: " << person.created_at;
+   cout << "Created at: " << person.created_at;
 
    fp.write((char*)&person,sizeof(person));
    fp.close();
@@ -86,14 +86,14 @@ void account_create()
 void account_view_all()
 {
    Account person;
-   std::ifstream fp("Accounts.dat");
+   ifstream fp("Accounts.dat");
    while (fp.read((char *)&person,sizeof(person)))
    {
-      std::cout << "*******************************************" << std::endl;
-      std::cout << "Account's ID: " << person.id << std::endl
-      << "Account's name: " << person.name << std::endl
-      << "Account's balance: $" << person.balance << std::endl
-      << "Created At: " << person.created_at << std::endl;  
+      cout << "*******************************************" << endl;
+      cout << "Account's ID: " << person.id << endl
+      << "Account's name: " << person.name << endl
+      << "Account's balance: $" << person.balance << endl
+      << "Created At: " << person.created_at << endl;  
    }
 
    fp.close();
@@ -102,21 +102,21 @@ void account_view_all()
 void account_search()
 {
    Account person;
-   std::ifstream fp("Accounts.dat");
+   ifstream fp("Accounts.dat");
    int choice;
-   std::cout << "Enter ID number :";
-   std::cin >> choice;
+   cout << "Enter ID number :";
+   cin >> choice;
 
    while (fp.read((char *)&person,sizeof(person)))
    {
       if (choice == person.id)
       {
-         std::cout << "*******************************************" << std::endl;
-         std::cout << "Account found" << std::endl;
-         std::cout << "Account's ID: " << person.id << std::endl
-         << "Account's name: " << person.name << std::endl
-         << "Account's balance: $" << person.balance << std::endl
-         << "Created At: " << person.created_at << std::endl;  
+         cout << "*******************************************" << endl;
+         cout << "Account found" << endl;
+         cout << "Account's ID: " << person.id << endl
+         << "Account's name: " << person.name << endl
+         << "Account's balance: $" << person.balance << endl
+         << "Created At: " << person.created_at << endl;  
       }
       
    }
@@ -126,11 +126,11 @@ void account_search()
 void account_deletion()
 {
    Account person;
-   std::ifstream fp("Accounts.dat");
-   std::ofstream tmp("tmp.dat",std::ios::binary | std::ios::app);
+   ifstream fp("Accounts.dat");
+   ofstream tmp("tmp.dat",ios::binary | ios::app);
    int choice;
-   std::cout << "Enter ID number :";
-   std::cin >> choice;
+   cout << "Enter ID number :";
+   cin >> choice;
 
    while (fp.read((char *)&person,sizeof(person)))
    {
@@ -138,12 +138,12 @@ void account_deletion()
 
       if (choice == person.id)
       {
-         std::cout << "Account found and deleted" << std::endl;
-         std::cout << "*******************************************" << std::endl;
-         std::cout << "Account's ID: " << person.id << std::endl
-         << "Account's name: " << person.name << std::endl
-         << "Account's balance: $" << person.balance << std::endl
-         << "Created At: " << person.created_at << std::endl; 
+         cout << "Account found and deleted" << endl;
+         cout << "*******************************************" << endl;
+         cout << "Account's ID: " << person.id << endl
+         << "Account's name: " << person.name << endl
+         << "Account's balance: $" << person.balance << endl
+         << "Created At: " << person.created_at << endl; 
       }
    }
 
@@ -151,7 +151,7 @@ void account_deletion()
    tmp.close();
 
    int status = remove("Accounts.dat");
-   if(status == 0) cout <<"\nFile Deleted Successfully!" << std::endl;
+   if(status == 0) cout <<"\nFile Deleted Successfully!" << endl;
    else cout<<"\nError Occurred!";
 
    if (rename("tmp.dat", "Accounts.dat") != 0) perror("Error renaming file\n");
@@ -163,38 +163,38 @@ void account_login()
    int choice;
    int found = 0;
    Account person;
-   std::ifstream fp("Accounts.dat");
-   std::cout << "Enter ID number :";
-   std::cin >> choice;
+   ifstream fp("Accounts.dat");
+   cout << "Enter ID number :";
+   cin >> choice;
 
    while (fp.read((char *)&person,sizeof(person))) if (choice == person.id) found = 1;
 
    if (found)
    {
       int pin;
-      std::cout << "Account found" << std::endl;
-      std:: cout << "Enter pin number" << std::endl;
-      std::cin >> pin;
-      std::cout << "Checking...." << std::endl;
+      cout << "Account found" << endl;
+      cout << "Enter pin number" << endl;
+      cin >> pin;
+      cout << "Checking...." << endl;
       if (pin == person.pin)
       {
-         std::cout << "Pin correct" << std::endl;
+         cout << "Pin correct" << endl;
          long double balance = person.menu();
          fp.close();
-         account_update(choice,balance);
+     
       }
 
-      else std::cout << "Wrong pin number. Please try again..." << std::endl;
+      else cout << "Wrong pin number. Please try again..." << endl;
    }
-   else std::cout << "Account not found..." << std::endl;
+   else cout << "Account not found..." << endl;
       
 }
 
 void account_update(int id,long double balance)
 {
    Account person;
-   std::ifstream fp("Accounts.dat");
-   std::ofstream tmp("tmp.dat",std::ios::binary | std::ios::app);
+   ifstream fp("Accounts.dat");
+   ofstream tmp("tmp.dat",ios::binary | ios::app);
    int choice = id;
 
    while (fp.read((char *)&person,sizeof(person)))
@@ -210,7 +210,7 @@ void account_update(int id,long double balance)
    tmp.close();
 
    int status = remove("Accounts.dat");
-   if(status == 0) cout<<"\nFile Deleted Successfully!" << std::endl;
+   if(status == 0) cout<<"\nFile Deleted Successfully!" << endl;
    else cout<<"\nError Occurred!";
 
    if (rename("tmp.dat", "Accounts.dat") != 0) perror("Error renaming file\n");
