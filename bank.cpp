@@ -30,7 +30,7 @@ void menu()
          account_create();
          break;
       case 2:
-         account_login();
+         account.login();
          break;
       case 3:
          account_view_all();
@@ -156,39 +156,6 @@ void account_deletion()
 
    if (rename("tmp.dat", "Accounts.dat") != 0) perror("Error renaming file\n");
 	else cout << "File renamed successfully";
-}
-
-void account_login()
-{
-   int choice;
-   int found = 0;
-   Account person;
-   ifstream fp("Accounts.dat");
-   cout << "Enter ID number :";
-   cin >> choice;
-
-   while (fp.read((char *)&person,sizeof(person))) if (choice == person.id) found = 1;
-
-   if (found)
-   {
-      int pin;
-      cout << "Account found" << endl;
-      cout << "Enter pin number" << endl;
-      cin >> pin;
-      cout << "Checking...." << endl;
-      if (pin == person.pin)
-      {
-         cout << "Pin correct" << endl;
-         long double balance = person.menu();
-         fp.close();
-         account_update(choice,balance);
-     
-      }
-
-      else cout << "Wrong pin number. Please try again..." << endl;
-   }
-   else cout << "Account not found..." << endl;
-      
 }
 
 void account_update(int id,long double balance)

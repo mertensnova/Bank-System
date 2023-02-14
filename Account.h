@@ -10,10 +10,39 @@ class Account {
         int id;
         char name[100];
         int pin;
-        long double balance;
+        double balance;
         char created_at[100];
+        
+        void login()
+        {
+            int choice;
+            int found = 0;
+            Account person;
+            std::ifstream fp("Accounts.dat");
+            std::cout << "Enter ID number :";
+            std::cin >> choice;
 
-        long double menu()
+            while (fp.read((char *)&person,sizeof(person))) if (choice == person.id) found = 1;
+
+            if (found)
+            {
+                int pin;
+                std::cout << "Account found" << std::endl;
+                std::cout << "Enter pin number" << std::endl;
+                std::cin >> pin;
+                std::cout << "Checking...." << std::endl;
+                if (pin == person.pin)
+                {
+                    std::cout << "Pin correct" << std::endl;
+                    menu();
+                    fp.close();
+                }
+                else std::cout << "Wrong pin number. Please try again..." << std::endl;
+            }
+                else std::cout << "Account not found..." << std::endl;   
+        }
+
+        double menu()
         {
             int choice;
             std::cout << "What do you want to do?" << std::endl;
@@ -41,9 +70,9 @@ class Account {
             return balance;
         }
 
-        long double deposit()
+        double deposit()
         {
-            long double amount;
+            double amount;
             std:: cout << "How much do you want to deposit?" << std::endl;
             std::cin >> amount;
 
@@ -57,9 +86,9 @@ class Account {
             std::cout << "Your balance: $" << balance << std::endl;
         }
 
-        long double withdraw()
+        double withdraw()
         {
-            long double amount;
+            double amount;
             std:: cout << "How much do you want to withdraw?" << std::endl;
             std::cin >> amount;
             balance -= amount;
