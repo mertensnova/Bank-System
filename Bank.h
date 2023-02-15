@@ -17,6 +17,7 @@ class Bank
         void bank_account_delete();
         void bank_account_login();
         void bank_account_menu(Account account);
+        void bank_account_update_balance(double __balance);
 };
 
 void Bank::bank_account_create(Account account)
@@ -77,6 +78,33 @@ void Bank::bank_account_delete()
 	else std::cout << "File renamed successfully";
 }
 
+ void Bank::bank_account_update_balance(double __balance)
+ {
+    Account account;
+    std::ifstream fp("Accounts.dat");
+    std::ofstream tmp("tmp.dat",std::ios::binary | std::ios::app);
+    int choice = account.get_id();
+
+    while (fp.read((char *)&account,sizeof(account)))
+    {
+        if (choice == account.get_id()) 
+        {
+            account.set_balance(__balance);
+            tmp.write((char*)&account,sizeof(account));
+        }
+    }
+
+    fp.close();
+    tmp.close();
+
+    int status = remove("Accounts.dat");
+    if(status == 0) std::cout <<"\nFile Deleted Successfully!" << std::endl;
+    else std::cout <<"\nError Occurred!";
+
+    if (rename("tmp.dat", "Accounts.dat") != 0) perror("Error renaming file\n");
+    else std::cout  << "File renamed successfully";
+ }
+
 void Bank::bank_account_menu(Account account)
 {
     int choice;
@@ -90,14 +118,14 @@ void Bank::bank_account_menu(Account account)
     switch (choice)
     {
     case 1:
-        account.set_balance();
+        std::cout << "Your balance : $" << account.get_balance() << std::endl;
         break;
     case 2:
         account.account_deposit();
         break;
-    case 3:
-        account.account_withdraw();
-        break;          
+    // case 3:
+    //     // account.account_withdraw();
+    //     break;          
     default:
         std::cout << "Invalid choice" << std::endl;
         break;
@@ -119,11 +147,11 @@ void Bank::bank_account_login()
             int pin;
             std::cout << "Enter your pin number: ";
             std::cin >> pin;
+            fp.close(); 
             if (pin == account.get_pin()) bank_account_menu(account);
             else std::cout << "Wrong pin";
         }
     }
-    fp.close(); 
 }
 
 #endif

@@ -28,7 +28,7 @@ int main(void)
         break;
     }
     case 2:
-        
+        bank.bank_account_login();
         break;
     case 3:
         bank.bank_account_read_all();
