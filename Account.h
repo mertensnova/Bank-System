@@ -7,7 +7,6 @@
 #include <fstream>
 #include <cstring>
 #include <typeinfo>
-#include "Utils.h"
 
 #define BUFFER_SIZE 100
 
@@ -22,17 +21,18 @@ class Account
 
     public:
         Account();
-        Account( std::string ___name );
+        Account( std::string __name);
 
-        void set_name();
         void set_pin();
         void set_balance();
+
+        int get_id();
         void account_show();
 };
 
 Account::Account() {}
 
-Account::Account( std::string ___name)
+Account::Account( std::string __name )
 {
     time_t now = time(0);
     char* dt = ctime(&now);
@@ -41,8 +41,8 @@ Account::Account( std::string ___name)
     srand(now);
  
     id = rand();
-
-    set_name();
+    strcpy(name,__name.c_str());
+    std::cin.ignore(1);
 
     set_pin();
     
@@ -51,19 +51,12 @@ Account::Account( std::string ___name)
     strcpy(created_at,dt);
 };
 
-void Account::set_name()
-{
-    std::string __name;
-    std::cout << "Name: ";
-    std::cin >> __name;
-    strcpy(name,__name.c_str());
-}
-
 void Account::set_pin()
 {
     int __pin;
     std::cout << "Pin: ";
     std::cin >> __pin;
+    std::cin.ignore(1);
     pin = __pin;
 }
 
@@ -73,6 +66,11 @@ void Account::set_balance()
     std::cout << "Balance: ";
     std::cin >> __balance;
     balance  = __balance;
+}
+
+int Account::get_id()
+{
+    return this->id;
 }
 
 void Account::account_show()
