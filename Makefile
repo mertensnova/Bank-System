@@ -1,11 +1,11 @@
-output: main.o bank.o
-	g++ main.o bank.o -o output
+output: main.o utils.o
+	g++ main.o utils.o -o output
 
-bank.o: bank.cpp Bank.h Account.h
-	g++ -c bank.cpp
+utils.o: utils.cpp Utils.h
+	g++ -c utils.cpp
 
-main.o: main.cpp
-	g++ -c main.cpp
+main.o: main.cpp Account.h Bank.h
+	g++ -c main.cpp utils.cpp
 
 clean:
-	rm *.o output
+	rm *.o 

@@ -1,101 +1,86 @@
 #if !defined(ACCOUNT_H)
 #define ACCOUNT_H
 #include <iostream>
+#include <conio.h>
 #include <ctime>
-#include <fstream>
 #include <random>
+#include <fstream>
+#include <cstring>
+#include <typeinfo>
+#include "Utils.h"
 
-class Account {
-    public:
-        int id;
-        char name[100];
+#define BUFFER_SIZE 100
+
+class Account
+{
+    private:
         int pin;
         double balance;
-        char created_at[100];
-        
-        void login()
-        {
-            int choice;
-            int found = 0;
-            Account person;
-            std::ifstream fp("Accounts.dat");
-            std::cout << "Enter ID number :";
-            std::cin >> choice;
+        int id;
+        char name[50];
+        char created_at[50];
 
-            while (fp.read((char *)&person,sizeof(person))) if (choice == person.id) found = 1;
+    public:
+        Account();
+        Account( std::string ___name );
 
-            if (found)
-            {
-                int pin;
-                std::cout << "Account found" << std::endl;
-                std::cout << "Enter pin number" << std::endl;
-                std::cin >> pin;
-                std::cout << "Checking...." << std::endl;
-                if (pin == person.pin)
-                {
-                    std::cout << "Pin correct" << std::endl;
-                    menu();
-                    fp.close();
-                }
-                else std::cout << "Wrong pin number. Please try again..." << std::endl;
-            }
-                else std::cout << "Account not found..." << std::endl;   
-        }
-
-        double menu()
-        {
-            int choice;
-            std::cout << "What do you want to do?" << std::endl;
-            std::cout << "1 - Show Balance" << std::endl;
-            std::cout << "2 - Deposit" << std::endl;
-            std::cout << "3 - Withdraw" << std::endl;
-            std::cout << "Choose a number: ";
-            std::cin >> choice;
-
-            switch (choice)
-            {
-            case 1:
-                show_balance();
-                break;
-            case 2:
-                balance = deposit();
-                break;
-            case 3:
-               balance = withdraw();  
-                break;          
-            default:
-                std::cout << "Invalid choice" << std::endl;
-                break;
-            }
-            return balance;
-        }
-
-        double deposit()
-        {
-            double amount;
-            std:: cout << "How much do you want to deposit?" << std::endl;
-            std::cin >> amount;
-
-            balance += amount;
-            std::cout << "You deposited: $" << amount << std::endl;
-            std::cout << "Your balance: $" << balance << std::endl;
-            return balance;
-        }
-        void show_balance()
-        {
-            std::cout << "Your balance: $" << balance << std::endl;
-        }
-
-        double withdraw()
-        {
-            double amount;
-            std:: cout << "How much do you want to withdraw?" << std::endl;
-            std::cin >> amount;
-            balance -= amount;
-            std::cout << "You withdrawed: $" << amount << std::endl;
-            std::cout << "Your balance: $" << balance << std::endl;
-            return balance;
-        }
+        void set_name();
+        void set_pin();
+        void set_balance();
+        void account_show();
 };
+
+Account::Account() {}
+
+Account::Account( std::string ___name)
+{
+    time_t now = time(0);
+    char* dt = ctime(&now);
+    tm *gmtm = gmtime(&now);
+    dt = asctime(gmtm); 
+    srand(now);
+ 
+    id = rand();
+
+    set_name();
+
+    set_pin();
+    
+    set_balance();
+    
+    strcpy(created_at,dt);
+};
+
+void Account::set_name()
+{
+    std::string __name;
+    std::cout << "Name: ";
+    std::cin >> __name;
+    strcpy(name,__name.c_str());
+}
+
+void Account::set_pin()
+{
+    int __pin;
+    std::cout << "Pin: ";
+    std::cin >> __pin;
+    pin = __pin;
+}
+
+void Account::set_balance()
+{
+    double __balance;
+    std::cout << "Balance: ";
+    std::cin >> __balance;
+    balance  = __balance;
+}
+
+void Account::account_show()
+{
+    std::cout << "ID: " << id << std::endl;
+    std::cout << "Name: " << name << std::endl;
+    std::cout << "Balance: " << balance << std::endl;
+    std::cout << "Created At: " << created_at << std::endl;     
+}
 
 #endif

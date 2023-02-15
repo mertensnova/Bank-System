@@ -1,29 +1,34 @@
-#if !defined(METHOD_H)
-#define METHOD_H
+#if !defined(BANK_H)
+#define BANK_H
 #include <iostream>
+#include <conio.h>
 #include <ctime>
-
+#include <random>
+#include <fstream>
+#include <cstring>
+#include "Account.h"
 
 class Bank
 {
-public:
-    void account_create();
-    void account_view_all();
-    void account_search();
-    void account_deletion();
+    public:
 
+        void bank_account_create(Account account);
+        void bank_account_read_all();
 };
 
+void Bank::bank_account_create(Account account)
+{
+    std::ofstream fp("Accounts.dat",std::ios::app | std::ios::binary);
+    fp.write((char *)&account,sizeof(account));
+    fp.close();
+}
 
-
-void menu();
-// void account_login();
-void account_create();
-void account_view_all();
-void account_search();
-void account_deletion();
-void account_update(int id,long double balance);
-// void account_transfer(int id,long double balance);
-
+void Bank::bank_account_read_all()
+{
+    std::ifstream fp("Accounts.dat",std::ios::binary);
+    Account account;
+    while (fp.read((char *)&account,sizeof(account))) account.account_show();
+    fp.close();
+}
 
 #endif
