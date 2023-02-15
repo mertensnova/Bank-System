@@ -15,6 +15,8 @@ class Bank
         void bank_account_read_all();
         void bank_account_search();
         void bank_account_delete();
+        void bank_account_login();
+        void bank_account_menu(Account account);
 };
 
 void Bank::bank_account_create(Account account)
@@ -73,6 +75,55 @@ void Bank::bank_account_delete()
 
     if (rename("tmp.dat", "Accounts.dat") != 0) perror("Error renaming file\n");
 	else std::cout << "File renamed successfully";
+}
+
+void Bank::bank_account_menu(Account account)
+{
+    int choice;
+    std::cout << "What do you want to do?" << std::endl;
+    std::cout << "1 - Show Balance" << std::endl;
+    std::cout << "2 - Deposit" << std::endl;
+    std::cout << "3 - Withdraw" << std::endl;
+    std::cout << "Choose a number: ";
+    std::cin >> choice;
+
+    switch (choice)
+    {
+    case 1:
+        account.set_balance();
+        break;
+    case 2:
+        account.account_deposit();
+        break;
+    case 3:
+        account.account_withdraw();
+        break;          
+    default:
+        std::cout << "Invalid choice" << std::endl;
+        break;
+    }
+}
+
+void Bank::bank_account_login()
+{
+    int choice; 
+    Account account;
+    std::ifstream fp("Accounts.dat",std::ios::binary);
+    std::cout << "Enter the id of the account you want to login? ";
+    std::cin >> choice;
+
+    while (fp.read((char *)&account,sizeof(account))) 
+    {
+        if (choice == account.get_id())
+        {
+            int pin;
+            std::cout << "Enter your pin number: ";
+            std::cin >> pin;
+            if (pin == account.get_pin()) bank_account_menu(account);
+            else std::cout << "Wrong pin";
+        }
+    }
+    fp.close(); 
 }
 
 #endif

@@ -27,6 +27,9 @@ int main(void)
         bank.bank_account_create(account);
         break;
     }
+    case 2:
+        
+        break;
     case 3:
         bank.bank_account_read_all();
         break;

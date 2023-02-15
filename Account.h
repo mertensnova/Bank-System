@@ -27,7 +27,12 @@ class Account
         void set_balance();
 
         int get_id();
+        int get_pin();
+        int get_balance();
+
         void account_show();
+        void account_deposit();
+        void account_withdraw();
 };
 
 Account::Account() {}
@@ -68,14 +73,13 @@ void Account::set_balance()
     balance  = __balance;
 }
 
-int Account::get_id()
-{
-    return this->id;
-}
+int Account::get_id(){ return this->id;}
+int Account::get_pin() {return this->pin;}
+int Account::get_balance() {return this->balance;}
 
 void Account::account_show()
 {
-    std::cout << "ID: " << id << std::endl;
+    std::cout << std::endl << "ID: " << id << std::endl;
     std::cout << "Name: " << name << std::endl;
     std::cout << "Balance: " << balance << std::endl;
     std::cout << "Created At: " << created_at << std::endl;     
