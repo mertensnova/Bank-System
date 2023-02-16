@@ -22,7 +22,7 @@ int main(void)
     {
         std::string name;
         std::cout << "Name: ";
-        std::cin >> name;
+        std::getline(std::cin >> std::ws,name);
         Account account(name);
         bank.bank_account_create(account);
         break;

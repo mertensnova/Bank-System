@@ -17,7 +17,7 @@ class Bank
         void bank_account_delete();
         void bank_account_login();
         void bank_account_menu(Account account);
-        void bank_account_update_balance(double __balance);
+        void bank_account_update_balance(double __balance,Account acc);
 };
 
 void Bank::bank_account_create(Account account)
@@ -49,7 +49,6 @@ void Bank::bank_account_search()
     fp.close(); 
 }
 
-
 void Bank::bank_account_delete()
 {
     int choice; 
@@ -78,12 +77,12 @@ void Bank::bank_account_delete()
 	else std::cout << "File renamed successfully";
 }
 
- void Bank::bank_account_update_balance(double __balance)
+ void Bank::bank_account_update_balance(double __balance,Account acc)
  {
     Account account;
     std::ifstream fp("Accounts.dat");
     std::ofstream tmp("tmp.dat",std::ios::binary | std::ios::app);
-    int choice = account.get_id();
+    int choice = acc.get_id();
 
     while (fp.read((char *)&account,sizeof(account)))
     {
@@ -122,10 +121,12 @@ void Bank::bank_account_menu(Account account)
         break;
     case 2:
         account.account_deposit();
+        bank_account_update_balance(account.get_balance(),account);
         break;
-    // case 3:
-    //     // account.account_withdraw();
-    //     break;          
+    case 3:
+        account.account_withdraw();
+        bank_account_update_balance(account.get_balance(),account);
+        break;          
     default:
         std::cout << "Invalid choice" << std::endl;
         break;

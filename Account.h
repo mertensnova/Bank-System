@@ -8,7 +8,7 @@
 #include <cstring>
 #include <typeinfo>
 
-#define BUFFER_SIZE 100
+#define BUFFER_SIZE 50
 
 class Account
 {
@@ -16,8 +16,8 @@ class Account
         int pin;
         double balance;
         int id;
-        char name[50];
-        char created_at[50];
+        char name[BUFFER_SIZE];
+        char created_at[BUFFER_SIZE];
 
     public:
         Account();
@@ -31,14 +31,16 @@ class Account
         int get_balance();
 
         void account_show();
-        void account_deposit();
-        // void account_withdraw();
+        double account_deposit();
+        double account_withdraw();
 };
 
 Account::Account() {}
 
 Account::Account( std::string __name )
 {
+    strcpy(name,__name.c_str());
+    
     time_t now = time(0);
     char* dt = ctime(&now);
     tm *gmtm = gmtime(&now);
@@ -46,13 +48,10 @@ Account::Account( std::string __name )
     srand(now);
  
     id = rand();
-    strcpy(name,__name.c_str());
-    std::cin.ignore(1);
 
     int __pin;
     std::cout << "Pin: ";
     std::cin >> __pin;
-    std::cin.ignore(1);
     set_pin(__pin);
     
     double __balance;
@@ -79,14 +78,26 @@ void Account::account_show()
     std::cout << "Created At: " << created_at << std::endl;     
 }
 
-void Account::account_deposit()
+double Account::account_deposit()
 {
     double amount;
     std:: cout << "How much do you want to deposit?" << std::endl;
+    std::cin >> amount;
     this->balance += amount;
     std::cout << "You deposited: $" << amount << std::endl;
     std::cout << "Your balance: $" << balance << std::endl;
-    
+    return this->balance;
+}
+
+double Account::account_withdraw()
+{
+    double amount;
+    std:: cout << "How much do you want to withdraw?" << std::endl;
+    std::cin >> amount;
+    this->balance -= amount;
+    std::cout << "You withdrew: $" << amount << std::endl;
+    std::cout << "Your balance: $" << balance << std::endl;
+    return this->balance;
 }
 
 #endif
