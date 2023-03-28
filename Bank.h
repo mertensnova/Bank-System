@@ -18,6 +18,7 @@ class Bank
         void bank_account_login();
         void bank_account_menu(Account account);
         void bank_account_update_balance(double __balance,Account acc);
+        void bank_account_transfer(double __amount);
 };
 
 void Bank::bank_account_create(Account account)
@@ -70,11 +71,9 @@ void Bank::bank_account_delete()
     tmp.close();
 
     int status = remove("Accounts.dat");
-    if( status == 0 ) std::cout<<"\nFile Deleted Successfully!";
-    else std::cout<<"\nError Occurred!";
+    if( status != 0 ) std::cout << "\nError Occurred!";
 
     if (rename("tmp.dat", "Accounts.dat") != 0) perror("Error renaming file\n");
-	else std::cout << "File renamed successfully";
 }
 
  void Bank::bank_account_update_balance(double __balance,Account acc)
@@ -97,12 +96,40 @@ void Bank::bank_account_delete()
     tmp.close();
 
     int status = remove("Accounts.dat");
-    if(status == 0) std::cout <<"\nFile Deleted Successfully!" << std::endl;
-    else std::cout <<"\nError Occurred!";
+    if( status != 0 ) std::cout << "\nError Occurred!";
 
     if (rename("tmp.dat", "Accounts.dat") != 0) perror("Error renaming file\n");
-    else std::cout  << "File renamed successfully";
  }
+
+
+void Bank::bank_account_transfer(double __amount)
+{
+    int choice;
+    std::cout << "To whom do you want to transfer" << "\n";
+    std::cin >> choice;
+    
+    Account account;
+    std::ifstream fp("Accounts.dat");
+    std::ofstream tmp("tmp.dat",std::ios::binary | std::ios::app);
+
+    while (fp.read((char *)&account,sizeof(account)))
+    {
+        if (choice == account.get_id()) 
+        {
+            account.set_balance(account.get_balance() + __amount);
+            tmp.write((char*)&account,sizeof(account));
+        }
+    }
+
+    fp.close();
+    tmp.close();
+
+    int status = remove("Accounts.dat");
+    if( status != 0 ) std::cout << "\nError Occurred!";
+
+    if (rename("tmp.dat", "Accounts.dat") != 0) perror("Error renaming file\n");
+
+}
 
 void Bank::bank_account_menu(Account account)
 {
@@ -111,6 +138,7 @@ void Bank::bank_account_menu(Account account)
     std::cout << "1 - Show Balance" << std::endl;
     std::cout << "2 - Deposit" << std::endl;
     std::cout << "3 - Withdraw" << std::endl;
+    std::cout << "4 - Transfer" << std::endl;
     std::cout << "Choose a number: ";
     std::cin >> choice;
 
@@ -126,12 +154,18 @@ void Bank::bank_account_menu(Account account)
     case 3:
         account.account_withdraw();
         bank_account_update_balance(account.get_balance(),account);
-        break;          
+        break;    
+    case 4:
+        // account.account_transfer();
+        bank_account_transfer(account.account_transfer());
+        break;      
+        // bank_account_update_balance(account.get_balance(),account);
     default:
         std::cout << "Invalid choice" << std::endl;
         break;
     }
 }
+
 
 void Bank::bank_account_login()
 {

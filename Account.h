@@ -33,6 +33,7 @@ class Account
         void account_show();
         double account_deposit();
         double account_withdraw();
+        double account_transfer();
 };
 
 Account::Account() {}
@@ -98,6 +99,17 @@ double Account::account_withdraw()
     std::cout << "You withdrew: $" << amount << std::endl;
     std::cout << "Your balance: $" << balance << std::endl;
     return this->balance;
+}
+
+double Account::account_transfer()
+{
+    double amount;
+    std:: cout << "How much do you want to transfer?" << std::endl;
+    std::cin >> amount;
+    this->balance -= amount;
+    std::cout << "You transfered: $" << amount << std::endl;
+
+    return amount;
 }
 
 #endif
