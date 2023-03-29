@@ -85,11 +85,9 @@ void Bank::bank_account_delete()
 
     while (fp.read((char *)&account,sizeof(account)))
     {
-        if (choice == account.get_id()) 
-        {
-            account.set_balance(__balance);
-            tmp.write((char*)&account,sizeof(account));
-        }
+        if (choice == account.get_id()) account.set_balance(__balance);
+
+        tmp.write((char*)&account,sizeof(account));
     }
 
     fp.close();
@@ -101,9 +99,9 @@ void Bank::bank_account_delete()
     if (rename("tmp.dat", "Accounts.dat") != 0) perror("Error renaming file\n");
  }
 
-
-void Bank::bank_account_transfer(double __amount)
-{
+ 
+ void Bank::bank_account_transfer(double __amount)
+ {
     int choice;
     std::cout << "To whom do you want to transfer" << "\n";
     std::cin >> choice;
@@ -115,10 +113,9 @@ void Bank::bank_account_transfer(double __amount)
     while (fp.read((char *)&account,sizeof(account)))
     {
         if (choice == account.get_id()) 
-        {
             account.set_balance(account.get_balance() + __amount);
+
             tmp.write((char*)&account,sizeof(account));
-        }
     }
 
     fp.close();
@@ -128,8 +125,8 @@ void Bank::bank_account_transfer(double __amount)
     if( status != 0 ) std::cout << "\nError Occurred!";
 
     if (rename("tmp.dat", "Accounts.dat") != 0) perror("Error renaming file\n");
+ }
 
-}
 
 void Bank::bank_account_menu(Account account)
 {
@@ -154,12 +151,11 @@ void Bank::bank_account_menu(Account account)
     case 3:
         account.account_withdraw();
         bank_account_update_balance(account.get_balance(),account);
-        break;    
-    case 4:
-        // account.account_transfer();
-        bank_account_transfer(account.account_transfer());
         break;      
-        // bank_account_update_balance(account.get_balance(),account);
+    case 4:
+        bank_account_transfer(account.account_transfer());
+        bank_account_update_balance(account.get_balance(),account);
+        break;
     default:
         std::cout << "Invalid choice" << std::endl;
         break;

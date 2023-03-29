@@ -108,7 +108,7 @@ double Account::account_transfer()
     std::cin >> amount;
     this->balance -= amount;
     std::cout << "You transfered: $" << amount << std::endl;
-
+    
     return amount;
 }
 
