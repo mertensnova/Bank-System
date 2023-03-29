@@ -98,10 +98,10 @@ void Bank::bank_account_delete()
 
     if (rename("tmp.dat", "Accounts.dat") != 0) perror("Error renaming file\n");
  }
-
  
  void Bank::bank_account_transfer(double __amount)
  {
+  
     int choice;
     std::cout << "To whom do you want to transfer" << "\n";
     std::cin >> choice;
@@ -125,8 +125,7 @@ void Bank::bank_account_delete()
     if( status != 0 ) std::cout << "\nError Occurred!";
 
     if (rename("tmp.dat", "Accounts.dat") != 0) perror("Error renaming file\n");
- }
-
+}
 
 void Bank::bank_account_menu(Account account)
 {
