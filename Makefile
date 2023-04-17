@@ -1,8 +1,9 @@
 output: main.o
-	g++ main.o -o output
+	g++ main.o -o output -l sqlite3
 
-main.o: main.cxx Account.h Bank.h
-	g++ -c main.cxx
+
+main.o: main.cc Account.h Bank.h SQL.h
+	g++ -c main.cc -l sqlite3
 
 clean:
 	rm *.o 

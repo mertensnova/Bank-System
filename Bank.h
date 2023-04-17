@@ -1,7 +1,6 @@
 #if !defined(BANK_H)
 #define BANK_H
 #include <iostream>
-#include <conio.h>
 #include <ctime>
 #include <random>
 #include <fstream>
