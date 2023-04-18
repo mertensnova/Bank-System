@@ -1,107 +1,36 @@
+#include <random>
+#include <string>
 #if !defined(ACCOUNT_H)
 #define ACCOUNT_H
-#include <cstring>
-#include <ctime>
-#include <fstream>
+#include "SQL.h"
 #include <iostream>
-#include <random>
-#include <typeinfo>
-
-#define BUFFER_SIZE 50
+#include <sqlite3.h>
 
 class Account {
 private:
   int pin;
   double balance;
-  int id;
-  char name[BUFFER_SIZE];
-  char created_at[BUFFER_SIZE];
+  std::string name;
+  std::string account_number;
 
 public:
-  Account();
-  Account(std::string __name);
-
-  void set_pin(int __pin);
-  void set_balance(double __balance);
-
-  int get_id();
-  int get_pin();
-  int get_balance();
-
-  void account_show();
-  double account_deposit();
-  double account_withdraw();
-  double account_transfer();
+  Account(sqlite3 *db);
 };
 
-Account::Account() {}
+Account::Account(sqlite3 *db) {
 
-Account::Account(std::string __name) {
-  strcpy(name, __name.c_str());
+  SQL insert;
+  std::cout << "Name: ";
+  std::getline(std::cin >> std::ws, this->name);
 
-  time_t now = time(0);
-  char *dt = ctime(&now);
-  tm *gmtm = gmtime(&now);
-  dt = asctime(gmtm);
-  srand(now);
-
-  id = rand();
-
-  int __pin;
   std::cout << "Pin: ";
-  std::cin >> __pin;
-  set_pin(__pin);
+  std::cin >> this->pin;
 
-  double __balance;
   std::cout << "Balance: ";
-  std::cin >> __balance;
-  set_balance(__balance);
+  std::cin >> this->balance;
 
-  strcpy(created_at, dt);
+  insert.sql_account_insert(db, this->name, this->balance, this->pin);
+
 };
-
-int Account::get_id() { return this->id; }
-int Account::get_pin() { return this->pin; }
-int Account::get_balance() { return this->balance; }
-
-void Account::set_pin(int __pin) { this->pin = __pin; }
-void Account::set_balance(double __balance) { this->balance = __balance; }
-
-void Account::account_show() {
-  std::cout << std::endl << "ID: " << id << std::endl;
-  std::cout << "Name: " << name << std::endl;
-  std::cout << "Balance: " << balance << std::endl;
-  std::cout << "Created At: " << created_at << std::endl;
-}
-
-double Account::account_deposit() {
-  double amount;
-  std::cout << "How much do you want to deposit?" << std::endl;
-  std::cin >> amount;
-  this->balance += amount;
-  std::cout << "You deposited: $" << amount << std::endl;
-  std::cout << "Your balance: $" << balance << std::endl;
-  return this->balance;
-}
-
-double Account::account_withdraw() {
-  double amount;
-  std::cout << "How much do you want to withdraw?" << std::endl;
-  std::cin >> amount;
-  this->balance -= amount;
-  std::cout << "You withdrew: $" << amount << std::endl;
-  std::cout << "Your balance: $" << balance << std::endl;
-  return this->balance;
-}
-
-double Account::account_transfer() {
-  double amount;
-  std::cout << "How much do you want to transfer?" << std::endl;
-  std::cin >> amount;
-  this->balance -= amount;
-  std::cout << "You transfered: $" << amount << std::endl;
-
-  return amount;
-}
 
 #endif
