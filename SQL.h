@@ -1,3 +1,4 @@
+#include <ostream>
 #include <string>
 #if !defined(SQL_H)
 #define SQL_H
@@ -12,7 +13,7 @@ public:
   void sql_close(sqlite3 *db);
   void sql_table_create(sqlite3 *db);
   void sql_account_insert(sqlite3 *db, std::string name, double balance,
-                          int pin);
+                          std::string pin);
 };
 
 sqlite3 *SQL::sql_open() {
@@ -21,52 +22,54 @@ sqlite3 *SQL::sql_open() {
   exit = sqlite3_open("bank.db", &DB);
 
   if (exit) {
-    std::cerr << "Error open DB " << sqlite3_errmsg(DB) << std::endl;
+    std::cerr << "Error:  " << sqlite3_errmsg(DB) << std::endl;
   } else
-    std::cout << "Opened Database Successfully!" << std::endl;
+    std::cout << "Success: Opened Database Successfully!" << std::endl;
 
   return DB;
 }
 
 void SQL::sql_close(sqlite3 *db) {
   sqlite3_close(db);
-  std::cout << "Database is closed" << std::endl;
+  std::cout << "Success: Close Database" << std::endl;
 }
 
 void SQL::sql_table_create(sqlite3 *db) {
 
   std::string sql = "CREATE TABLE ACCOUNTS("
-                    "ID INT PRIMARY KEY     NOT NULL, "
-                    "NAME           TEXT    NOT NULL, "
-                    "PIN            INT     NOT NULL, "
-                    "CREATED_AT     TEXT    NOT NULL, "
-                    "BALANCE        REAL );";
+                    "ID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,"
+                    "NAME           TEXT NOT NULL,"
+                    "PIN            TEXT NOT NULL,"
+                    "Created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+                    "BALANCE        REAL NOT NULL );";
   int exit = 0;
   char *messaggeError;
   exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &messaggeError);
 
   if (exit != SQLITE_OK) {
-    std::cerr << "Error Create Table" << std::endl;
+    std::cerr << "Error: Create Table" << std::endl;
     sqlite3_free(messaggeError);
   } else
-    std::cout << "Table Accounts created Successfully" << std::endl;
+    std::cout << "Success: Table Accounts created Successfully" << std::endl;
 }
 void SQL::sql_account_insert(sqlite3 *db, std::string name, double balance,
-                             int pin) {
+                             std::string pin) {
+  sqlite3_stmt *stmt;
 
-  char *messaggeError;
-  int exit = 0;
+  std::string sql =
+      "INSERT INTO ACCOUNTS (name, pin, balance) VALUES (?, ?, ?)";
 
-  std::string sql("INSERT INTO ACCOUNTS (NAME,PIN,BALANCE) VALUES(" + name +
-                  "," + std::to_string(pin) + "," + std::to_string(balance) +
-                  ");");
-
-  exit = sqlite3_exec(db, sql.c_str(), NULL, 0, &messaggeError);
-  if (exit != SQLITE_OK) {
-    std::cerr << "Error: " << messaggeError << std::endl;
-    sqlite3_free(messaggeError);
+  sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL);
+  if (stmt != NULL) {
+    sqlite3_bind_text(stmt, 1, name.c_str(), 0, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, pin.c_str(), 0, SQLITE_TRANSIENT);
+    sqlite3_bind_double(stmt, 3, balance);
+    sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    std::cout << name << "has been added successfully"
+              << "\n";
   } else
-    std::cout << "Records created Successfully!" << std::endl;
+    std::cout << "\n" << sqlite3_errmsg(db) << "\n";
 }
 
 #endif // SQL_H

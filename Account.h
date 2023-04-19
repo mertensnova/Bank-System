@@ -8,7 +8,7 @@
 
 class Account {
 private:
-  int pin;
+  std::string pin;
   double balance;
   std::string name;
   std::string account_number;
@@ -24,13 +24,12 @@ Account::Account(sqlite3 *db) {
   std::getline(std::cin >> std::ws, this->name);
 
   std::cout << "Pin: ";
-  std::cin >> this->pin;
-
+  std::getline(std::cin >> std::ws, this->pin);
+  
   std::cout << "Balance: ";
   std::cin >> this->balance;
 
   insert.sql_account_insert(db, this->name, this->balance, this->pin);
-
 };
 
 #endif
