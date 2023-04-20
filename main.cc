@@ -9,6 +9,7 @@ int main(void) {
 
   sqlite3 *DB = db.sql_open();
   db.sql_table_create(DB);
+  Account account;
 
   int choice;
   std::cout << "\t\t\t********************** Banking "
@@ -28,8 +29,10 @@ int main(void) {
   switch (choice) {
 
   case 1:
-    Account account(DB);
-
+    account.account_create(DB);
+    break;
+  case 2:
+    account.account_search(DB);
     break;
   }
   db.sql_close(DB);
