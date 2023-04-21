@@ -34,6 +34,14 @@ int main(void) {
   case 2:
     account.account_search(DB);
     break;
+  case 3:
+    account.account_show_all(DB);
+    break;
+  case 4:
+    account.account_search(DB);
+  case 5:
+    account.account_delete(DB);
+    break;
   }
   db.sql_close(DB);
   return 0;
