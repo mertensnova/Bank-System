@@ -1,14 +1,14 @@
 #include <iostream>
 #include <sqlite3.h>
 
-#include "Account.h"
+#include "Accounts.h"
 #include "SQL.h"
 int main(void) {
 
   SQL db;
 
   sqlite3 *DB = db.sql_open();
-  db.sql_table_create(DB);
+  db.sql_table_create(*DB);
   Account account;
 
   int choice;
@@ -29,20 +29,21 @@ int main(void) {
   switch (choice) {
 
   case 1:
-    account.account_create(DB);
+    account.account_create(*DB);
     break;
   case 2:
-    account.account_search(DB);
+    account.account_search(*DB);
     break;
   case 3:
-    account.account_show_all(DB);
+    account.account_show_all(*DB);
     break;
   case 4:
-    account.account_search(DB);
+    account.account_search(*DB);
+    break;
   case 5:
-    account.account_delete(DB);
+    account.account_delete(*DB);
     break;
   }
-  db.sql_close(DB);
+  db.sql_close(*DB);
   return 0;
 }
