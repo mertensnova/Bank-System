@@ -74,7 +74,8 @@ void SQL::sql_account_insert(sqlite3 &db, std::string name, double balance,
     std::cout << "\n" << sqlite3_errmsg(&db) << "\n";
 }
 
-static int callback(void *data, int argc, char **argv, char **azColName) {  
+static int callback(void *data, int argc, char **argv, char **azColName) {
+
   int i;
   fprintf(stderr, "%s: ", (const char *)data);
 

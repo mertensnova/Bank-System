@@ -2,6 +2,7 @@
 #include <sqlite3.h>
 
 #include "Accounts.h"
+#include "Bank.h"
 #include "SQL.h"
 int main(void) {
 
@@ -10,20 +11,17 @@ int main(void) {
   sqlite3 *DB = db.sql_open();
   db.sql_table_create(*DB);
   Account account;
+  Bank Op;
 
   int choice;
-  std::cout << "\t\t\t********************** Banking "
-               "System****************************"
-            << std::endl;
-  std::cout
-      << "\t\t\t********************** Main menu ****************************"
-      << std::endl;
-  std::cout << "\t1- Create an account" << std::endl;
-  std::cout << "\t2- Login to an account" << std::endl;
-  std::cout << "\t3- Show all accounts" << std::endl;
-  std::cout << "\t4- Search account" << std::endl;
-  std::cout << "\t5- Delete an account" << std::endl;
-  std::cout << "\tChoose a number: ";
+  std::cout << "Banking System" << std::endl;
+  std::cout << "Main Menu" << std::endl;
+  std::cout << "[1] Create an account" << std::endl;
+  std::cout << "[2] Login to an account" << std::endl;
+  std::cout << "[3] Show all accounts" << std::endl;
+  std::cout << "[4] Search account" << std::endl;
+  std::cout << "[5] Delete an account" << std::endl;
+  std::cout << "Choose a number: ";
   std::cin >> choice;
 
   switch (choice) {
@@ -32,7 +30,7 @@ int main(void) {
     account.account_create(*DB);
     break;
   case 2:
-    account.account_search(*DB);
+    Op.bank_login(*DB);
     break;
   case 3:
     account.account_show_all(*DB);
