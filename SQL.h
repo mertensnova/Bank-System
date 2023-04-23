@@ -17,6 +17,8 @@ public:
   void sql_account_search(sqlite3 &db, std::string name, int id);
   void sql_account_delete(sqlite3 &db, int id);
   void sql_account_show_all(sqlite3 &db);
+  void sql_account_update(sqlite3 &db, std::string name, int id,
+                          double balance);
 };
 
 sqlite3 *SQL::sql_open() {
@@ -88,19 +90,20 @@ static int callback(void *data, int argc, char **argv, char **azColName) {
 }
 
 void SQL::sql_account_search(sqlite3 &db, std::string name, int id) {
-  std::string data("");
-  std::string sql =
-      "SELECT * FROM ACCOUNTS WHERE id = " + std::to_string(id) + ";";
+  sqlite3_stmt *stmt;
 
-  int exit = sqlite3_exec(&db, sql.c_str(), callback, (void *)data.c_str(),
-                          &this->err_msg);
+  int rc;
+  std::string sql = "SELECT *  FROM ACCOUNTS WHERE id = ?;";
 
-  if (exit != SQLITE_OK) {
-    std::cerr << "Error: " << this->err_msg << "\n";
-    sqlite3_free(this->err_msg);
-  } else {
-    std::cout << "Account has been found"
-              << "\n";
+  sqlite3_prepare_v2(&db, sql.c_str(), -1, &stmt, NULL);
+
+  sqlite3_bind_int(stmt, 1, id);
+  while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+    printf("--------------------------------------------------\n");
+    printf("Name: %s\n", sqlite3_column_text(stmt, 1));
+    printf("Balance: %lf\n", sqlite3_column_double(stmt, 4));
+    printf("Created at: %s\n", sqlite3_column_text(stmt, 3));
+    printf("--------------------------------------------------\n");
   }
 }
 
