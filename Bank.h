@@ -14,7 +14,7 @@ public:
   void bank_login(sqlite3 &db);
   void bank_menu(sqlite3 &db, std::string acc_no, double balance);
   void bank_withdraw(sqlite3 &db, std::string acc_no, double balance);
-  void bank_deposit(sqlite3 &db, std::string acc_no);
+  void bank_deposit(sqlite3 &db, std::string acc_no, double balance);
   void bank_transfer(sqlite3 &db, std::string acc_no);
 };
 
@@ -40,7 +40,7 @@ void Bank::bank_menu(sqlite3 &db, std::string acc_no, double balance) {
     bank_withdraw(db, acc_no, balance);
     break;
   case 2:
-    std::cout << "X";
+    bank_deposit(db, acc_no, balance);
     break;
   case 3:
     std::cout << "aaa";
@@ -53,7 +53,7 @@ void Bank::bank_login(sqlite3 &db) {
 
   double balance;
   char *err_msg;
-  std::cout << "[*] Enter yout account number: ";
+  std::cout << "[*] Enter yout account name: ";
 
   std::getline(std::cin >> std::ws, acc_no);
   std::cout << "[*] Enter your pin number: ";
@@ -78,26 +78,48 @@ void Bank::bank_withdraw(sqlite3 &db, std::string acc_no, double balance) {
   double amount;
   sqlite3_stmt *stmt;
   int rc;
-  std::cout << "[*] How much do you want to withdraw?";
+  std::cout << "[*] How much do you want to withdraw? ";
   std::cin >> amount;
   if (amount > balance) {
     std::cout << "[!] Not enought balance"
               << "\n";
     return;
   }
-  std::string sql = "UPDATE Accounts set balance = ? where name = ?;";
+  std::string sql = "UPDATE ACCOUNTS SET balance = ? WHERE name = ?;";
 
   sqlite3_prepare_v2(&db, sql.c_str(), -1, &stmt, NULL);
 
   if (stmt != NULL) {
-    sqlite3_bind_text(stmt, 1, acc_no.c_str(), acc_no.length(),
+    sqlite3_bind_double(stmt, 1, balance - amount);
+    sqlite3_bind_text(stmt, 2, acc_no.c_str(), acc_no.length(),
                       SQLITE_TRANSIENT);
-
-    sqlite3_bind_double(stmt, 2, balance - amount);
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
+    std::cout << "[*] Your balance now " << balance - amount << "\n";
   } else
     std::cout << "\n" << sqlite3_errmsg(&db) << "\n";
 }
 
+void Bank::bank_deposit(sqlite3 &db, std::string acc_no, double balance) {
+
+  double amount;
+  sqlite3_stmt *stmt;
+  int rc;
+  std::cout << "[*] How much do you want to deposit? ";
+  std::cin >> amount;
+  
+  std::string sql = "UPDATE ACCOUNTS SET balance = ? WHERE name = ?;";
+
+  sqlite3_prepare_v2(&db, sql.c_str(), -1, &stmt, NULL);
+
+  if (stmt != NULL) {
+    sqlite3_bind_double(stmt, 1, balance +  amount);
+    sqlite3_bind_text(stmt, 2, acc_no.c_str(), acc_no.length(),
+                      SQLITE_TRANSIENT);
+    sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    std::cout << "[*] Your balance now " << balance + amount << "\n";
+  } else
+    std::cout << "\n" << sqlite3_errmsg(&db) << "\n";
+}
 #endif

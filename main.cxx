@@ -18,9 +18,8 @@ int main(void) {
   std::cout << "Main Menu" << std::endl;
   std::cout << "[1] Create an account" << std::endl;
   std::cout << "[2] Login to an account" << std::endl;
-  std::cout << "[3] Show all accounts" << std::endl;
-  std::cout << "[4] Search account" << std::endl;
-  std::cout << "[5] Delete an account" << std::endl;
+  std::cout << "[3] Search an account" << std::endl;
+  std::cout << "[4] Delete an account" << std::endl;
   std::cout << "Choose a number: ";
   std::cin >> choice;
 
@@ -33,12 +32,9 @@ int main(void) {
     Op.bank_login(*DB);
     break;
   case 3:
-    account.account_show_all(*DB);
-    break;
-  case 4:
     account.account_search(*DB);
     break;
-  case 5:
+  case 4:
     account.account_delete(*DB);
     break;
   }

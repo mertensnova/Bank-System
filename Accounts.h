@@ -15,7 +15,6 @@ public:
   SQL operation;
   void account_create(sqlite3 &db);
   void account_search(sqlite3 &db);
-  void account_show_all(sqlite3 &db);
   void account_delete(sqlite3 &db);
 };
 
@@ -41,11 +40,6 @@ void Account::account_search(sqlite3 &db) {
 
   this->operation.sql_account_search(db, "Amr", id);
 }
-
-void Account::account_show_all(sqlite3 &db) {
-  this->operation.sql_account_show_all(db);
-}
-
 void Account::account_delete(sqlite3 &db) {
 
   int id;

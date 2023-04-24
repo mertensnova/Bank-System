@@ -1,3 +1,4 @@
+#include <string>
 #if !defined(SQL_H)
 #define SQL_H
 
@@ -16,7 +17,6 @@ public:
 
   void sql_account_search(sqlite3 &db, std::string name, int id);
   void sql_account_delete(sqlite3 &db, int id);
-  void sql_account_show_all(sqlite3 &db);
   void sql_account_update(sqlite3 &db, std::string name, int id,
                           double balance);
 };
@@ -27,16 +27,18 @@ sqlite3 *SQL::sql_open() {
   exit = sqlite3_open("bank.db", &DB);
 
   if (exit) {
-    std::cerr << "Error:  " << sqlite3_errmsg(DB) << std::endl;
+    std::cerr << "[!] Error:  " << sqlite3_errmsg(DB) << "\n\n";
   } else
-    std::cout << "Success: Opened Database Successfully!" << std::endl;
+    std::cout << "Success: Opened Database Successfully!"
+              << "\n\n";
 
   return DB;
 }
 
 void SQL::sql_close(sqlite3 &db) {
   sqlite3_close(&db);
-  std::cout << "Success: Close Database" << std::endl;
+  std::cout << "Success: Close Database"
+            << "\n\n";
 }
 
 void SQL::sql_table_create(sqlite3 &db) {
@@ -76,19 +78,6 @@ void SQL::sql_account_insert(sqlite3 &db, std::string name, double balance,
     std::cout << "\n" << sqlite3_errmsg(&db) << "\n";
 }
 
-static int callback(void *data, int argc, char **argv, char **azColName) {
-
-  int i;
-  fprintf(stderr, "%s: ", (const char *)data);
-
-  for (i = 0; i < argc; i++) {
-    printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-  }
-
-  printf("\n");
-  return 0;
-}
-
 void SQL::sql_account_search(sqlite3 &db, std::string name, int id) {
   sqlite3_stmt *stmt;
 
@@ -99,29 +88,12 @@ void SQL::sql_account_search(sqlite3 &db, std::string name, int id) {
 
   sqlite3_bind_int(stmt, 1, id);
   while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
-    printf("--------------------------------------------------\n");
-    printf("Name: %s\n", sqlite3_column_text(stmt, 1));
-    printf("Balance: %lf\n", sqlite3_column_double(stmt, 4));
-    printf("Created at: %s\n", sqlite3_column_text(stmt, 3));
-    printf("--------------------------------------------------\n");
+    printf("[*] Name: %s\n", sqlite3_column_text(stmt, 1));
+    printf("[*] Balance: %lf\n", sqlite3_column_double(stmt, 4));
+    printf("[*] Created at: %s\n", sqlite3_column_text(stmt, 3));
   }
 }
 
-void SQL::sql_account_show_all(sqlite3 &db) {
-
-  std::string data("");
-  std::string sql = "SELECT * FROM ACCOUNTS;";
-  int exit = sqlite3_exec(&db, sql.c_str(), callback, (void *)data.c_str(),
-                          &this->err_msg);
-
-  if (exit != SQLITE_OK) {
-    std::cerr << "Error: " << this->err_msg << "\n";
-    sqlite3_free(this->err_msg);
-  } else {
-    std::cout << "All records has been listed"
-              << "\n";
-  }
-}
 
 void SQL::sql_account_delete(sqlite3 &db, int id) {
   std::string sql =
