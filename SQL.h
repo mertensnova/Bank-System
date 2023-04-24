@@ -1,4 +1,3 @@
-#include <string>
 #if !defined(SQL_H)
 #define SQL_H
 
