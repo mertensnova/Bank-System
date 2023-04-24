@@ -11,14 +11,14 @@ public:
   char *err_msg;
   sqlite3 *sql_open();
   void sql_close(sqlite3 &db);
-  void sql_table_create(sqlite3 &db);
+  void sql_table_create(sqlite3 &db, std::string sql);
   void sql_account_insert(sqlite3 &db, std::string name, double balance,
                           std::string pin);
 
   void sql_account_search(sqlite3 &db, std::string name, int id);
   void sql_account_delete(sqlite3 &db, int id);
-  void sql_account_update(sqlite3 &db, std::string name, int id,
-                          double balance);
+  void sql_transactions_add(sqlite3 &db, std::string payer, std::string payee,
+                            double amount,std::string type);
 };
 
 sqlite3 *SQL::sql_open() {
@@ -41,14 +41,7 @@ void SQL::sql_close(sqlite3 &db) {
             << "\n\n";
 }
 
-void SQL::sql_table_create(sqlite3 &db) {
-
-  std::string sql = "CREATE TABLE ACCOUNTS("
-                    "ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-                    "NAME           TEXT NOT NULL,"
-                    "PIN            TEXT NOT NULL,"
-                    "CREATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
-                    "BALANCE        REAL NOT NULL );";
+void SQL::sql_table_create(sqlite3 &db, std::string sql) {
   int exit = 0;
   exit = sqlite3_exec(&db, sql.c_str(), NULL, 0, &this->err_msg);
 
@@ -56,8 +49,9 @@ void SQL::sql_table_create(sqlite3 &db) {
     std::cerr << "Error: " << this->err_msg << std::endl;
     sqlite3_free(this->err_msg);
   } else
-    std::cout << "Success: Table Accounts created Successfully" << std::endl;
+    std::cout << "Success: Tables created Successfully" << std::endl;
 }
+
 void SQL::sql_account_insert(sqlite3 &db, std::string name, double balance,
                              std::string pin) {
   sqlite3_stmt *stmt;
@@ -89,11 +83,10 @@ void SQL::sql_account_search(sqlite3 &db, std::string name, int id) {
   sqlite3_bind_int(stmt, 1, id);
   while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
     printf("[*] Name: %s\n", sqlite3_column_text(stmt, 1));
-    printf("[*] Balance: %lf\n", sqlite3_column_double(stmt, 4));
-    printf("[*] Created at: %s\n", sqlite3_column_text(stmt, 3));
+    printf("[*] Balance: %lf\n", sqlite3_column_double(stmt, 3));
+    printf("[*] Created at: %s\n", sqlite3_column_text(stmt, 4));
   }
 }
-
 
 void SQL::sql_account_delete(sqlite3 &db, int id) {
   std::string sql =
@@ -105,4 +98,23 @@ void SQL::sql_account_delete(sqlite3 &db, int id) {
   } else
     std::cout << "Record deleted Successfully!" << std::endl;
 }
+void SQL::sql_transactions_add(sqlite3 &db, std::string payer,
+                               std::string payee, double amount,std::string type) {
+  sqlite3_stmt *stmt;
+
+  std::string sql = "INSERT INTO TRANSACTIONS (account,type, whom, amount) "
+                    "VALUES (?, ?, ?,?)";
+
+  sqlite3_prepare_v2(&db, sql.c_str(), -1, &stmt, NULL);
+  if (stmt != NULL) {
+    sqlite3_bind_text(stmt, 1, payer.c_str(), payer.length(), SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, type.c_str(), type.length(), SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, payee.c_str(), payee.length(), SQLITE_TRANSIENT);
+    sqlite3_bind_double(stmt, 4, amount);
+    sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+  } else
+    std::cout << "\n" << sqlite3_errmsg(&db) << "\n";
+}
+
 #endif // SQL_H
