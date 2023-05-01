@@ -4,13 +4,14 @@
 #include "Accounts.h"
 #include "Bank.h"
 #include "SQL.h"
+
 int main(void) {
 
   SQL db;
 
   sqlite3 *DB = db.sql_open();
 
-  std::string sql = "CREATE TABLE ACCOUNTS("
+  std::string sql = "CREATE TABLE IF NOT EXISTS ACCOUNTS("
                     "ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
                     "NAME           TEXT NOT NULL,"
                     "PIN            TEXT NOT NULL,"
@@ -19,17 +20,16 @@ int main(void) {
 
   db.sql_table_create(*DB, sql);
 
-  
-  sql = "CREATE TABLE TRANSACTIONS("
-                    "ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-                    "ACCOUNT         TEXT NOT NULL,"
-                    "TYPE            TEXT NOT NULL,"
-                    "WHOM            TEXT ,"
-                    "AMOUNT REAL NOT NULL,"
-                    "CREATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
+  sql = "CREATE TABLE IF NOT EXISTS TRANSACTIONS("
+        "ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+        "ACCOUNT         TEXT NOT NULL,"
+        "TYPE            TEXT NOT NULL,"
+        "WHOM            TEXT ,"
+        "AMOUNT REAL NOT NULL,"
+        "CREATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
 
   db.sql_table_create(*DB, sql);
- 
+
   Account account;
   Bank Op;
 

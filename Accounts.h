@@ -1,15 +1,15 @@
 #if !defined(ACCOUNTS_H)
 #define ACCOUNTS_H
-#include "SQL.h"
 #include <iostream>
 #include <sqlite3.h>
+
+#include "SQL.h"
 
 class Account {
 private:
   std::string pin;
   double balance;
   std::string name;
-  std::string account_number;
 
 public:
   SQL operation;
@@ -20,6 +20,7 @@ public:
 
 void Account::account_create(sqlite3 &db) {
 
+  // Get user input
   std::cout << "Name: ";
   std::getline(std::cin >> std::ws, this->name);
 
@@ -29,23 +30,27 @@ void Account::account_create(sqlite3 &db) {
   std::cout << "Balance: ";
   std::cin >> this->balance;
 
-  this->operation.sql_account_insert(db, this->name, this->balance, this->pin);
+  // Insert to the database
+  operation.sql_account_insert(db, this->name, this->balance, this->pin);
 };
 
 void Account::account_search(sqlite3 &db) {
-
+  // Get user input
   int id;
   std::cout << "Enter a ID number: ";
   std::cin >> id;
 
-  this->operation.sql_account_search(db, "Amr", id);
+  // Search the account
+  operation.sql_account_search(db, id);
 }
 void Account::account_delete(sqlite3 &db) {
-
+  // Get user input
   int id;
   std::cout << "Enter a ID number: ";
   std::cin >> id;
-  this->operation.sql_account_delete(db, id);
+
+  // Delete the account
+  operation.sql_account_delete(db, id);
 }
 
 #endif
