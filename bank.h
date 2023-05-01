@@ -6,11 +6,12 @@
 #include <iostream>
 #include <random>
 
-#include "Accounts.h"
-#include "SQL.h"
+#include "accounts.h"
+#include "sql.h"
 
 class Bank {
 public:
+  SQL operation;
   int bank_login(sqlite3 &db);
   int bank_menu(sqlite3 &db, std::string name, double balance);
   int bank_withdraw(sqlite3 &db, std::string name, double balance);
@@ -97,16 +98,22 @@ int Bank::bank_withdraw(sqlite3 &db, std::string name, double balance) {
   std::cout << "[*] How much do you want to withdraw? ";
   std::cin >> amount;
 
+  // Check if the amount is enough
+  if (amount > balance) {
+    std::cout << "[!] Not enough balance" << std::endl;
+    return -1;
+  }
+
   // Check if the amount is valid
-  if (amount > balance || amount < 0) {
-    std::cout << "[!] Not enought balance" << std::endl;
+  if (amount < 0) {
+    std::cout << "[!] Not amount invalid" << std::endl;
     return -1;
   }
 
   // SQL query to update the users balance
   std::string sql = "UPDATE ACCOUNTS SET balance = ? WHERE name = ?;";
 
-  // COnvert the sql query to prepare statement
+  // Convert the sql query to prepare statement
   sqlite3_prepare_v2(&db, sql.c_str(), -1, &stmt, NULL);
 
   if (stmt != NULL) {
@@ -124,88 +131,125 @@ int Bank::bank_withdraw(sqlite3 &db, std::string name, double balance) {
   }
 
   // Add the transation to the database
-  SQL x;
-  x.sql_transactions_add(db, name, "", amount, "Withdraw");
+  this->operation.sql_transactions_add(db, name, "", amount, "Withdraw");
   return 0;
 }
 
 int Bank::bank_deposit(sqlite3 &db, std::string name, double balance) {
 
+  // Get user input
   double amount;
   sqlite3_stmt *stmt;
   std::cout << "[*] How much do you want to deposit? ";
   std::cin >> amount;
 
+  // Check if the amount is valid
+  if (amount < 0) {
+    std::cout << "[!] Not amount invalid" << std::endl;
+    return -1;
+  }
+  // SQL query to get users balance
   std::string sql = "UPDATE ACCOUNTS SET balance = ? WHERE name = ?;";
 
+  // Converts the SQL query to prepare statements
   sqlite3_prepare_v2(&db, sql.c_str(), -1, &stmt, NULL);
 
   if (stmt != NULL) {
+    // Bind the value to prepare statement
     sqlite3_bind_double(stmt, 1, balance + amount);
     sqlite3_bind_text(stmt, 2, name.c_str(), name.length(), SQLITE_TRANSIENT);
+    // Finalize the statement
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
     std::cout << "[*] Your balance now " << balance + amount << "\n";
-  } else
-    std::cout << "\n" << sqlite3_errmsg(&db) << "\n";
+  } else {
 
-  SQL x;
-  x.sql_transactions_add(db, name, "", amount, "Deposit");
+    std::cout << "\n" << sqlite3_errmsg(&db) << "\n";
+    return -1;
+  }
+
+  // Add the transactions to the database
+  this->operation.sql_transactions_add(db, name, "", amount, "Deposit");
+  return 0;
 }
 
 int Bank::bank_transfer(sqlite3 &db, std::string name, double balance) {
 
+  // Init STMT
+  sqlite3_stmt *stmt;
+  int rc = sqlite3_step(stmt);
+
+  // Get the users input
   double amount, payee;
   std::string whom;
-  sqlite3_stmt *stmt;
-  int rc;
   std::cout << "[*] How much do you want to transfer? ";
   std::cin >> amount;
   std::cout << "[*] To whom? ";
   std::getline(std::cin >> std::ws, whom);
 
+  // Check if the user has enough amount
   if (amount > balance) {
-    std::cout << "[!] Not enought balance"
-              << "\n";
-    return;
+    std::cout << "[!] Not enougth balance" << std::endl;
+    return -1;
+  }
+  // Check if the amount is valid
+  if (amount < 0) {
+    std::cout << "[!] Not amount invalid" << std::endl;
+    return -1;
   }
 
+  // SQL query to  decrease the account balance
   std::string sql = "UPDATE ACCOUNTS SET balance = ? WHERE name = ?;";
-
+  // Convert the SQL query
   sqlite3_prepare_v2(&db, sql.c_str(), -1, &stmt, NULL);
 
   if (stmt != NULL) {
+    // Bind the values
     sqlite3_bind_double(stmt, 1, balance - amount);
     sqlite3_bind_text(stmt, 2, name.c_str(), name.length(), SQLITE_TRANSIENT);
+    // Finialize the statements
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
     std::cout << "[*] Your balance now " << balance - amount << "\n";
-  } else
+  } else {
     std::cout << "\n" << sqlite3_errmsg(&db) << "\n";
+    return -1;
+  }
 
+  // SQL query to get payee name and balance
   sql = "SELECT *  FROM ACCOUNTS WHERE name = ?;";
 
+  // Prepare the statements
   sqlite3_prepare_v2(&db, sql.c_str(), -1, &stmt, NULL);
 
+  // Bind the values
   sqlite3_bind_text(stmt, 1, whom.c_str(), whom.length(), NULL);
-  if ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+  if (rc == SQLITE_ROW) {
+    // Get payees balance
     payee = sqlite3_column_double(stmt, 4);
   }
 
+  // SQL query to increase the payees balance
   sql = "UPDATE ACCOUNTS SET balance = ? WHERE name = ?;";
 
+  // Prepare the statements
   sqlite3_prepare_v2(&db, sql.c_str(), -1, &stmt, NULL);
 
   if (stmt != NULL) {
+    // Bind the values
     sqlite3_bind_double(stmt, 1, payee + amount);
     sqlite3_bind_text(stmt, 2, whom.c_str(), whom.length(), SQLITE_TRANSIENT);
+    // Finialize and execute
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
-  } else
+  } else {
     std::cout << "\n" << sqlite3_errmsg(&db) << "\n";
+    return -1;
+  }
 
-  SQL x;
-  x.sql_transactions_add(db, name, whom, amount, "Transfer");
+  // Add the transactions to the database
+  this->operation.sql_transactions_add(db, name, whom, amount, "Transfer");
+  return 0;
 }
 
 #endif

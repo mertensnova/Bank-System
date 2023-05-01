@@ -3,7 +3,7 @@
 #include <iostream>
 #include <sqlite3.h>
 
-#include "SQL.h"
+#include "sql.h"
 
 class Account {
 private:

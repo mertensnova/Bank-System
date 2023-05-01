@@ -1,16 +1,16 @@
 #include <iostream>
 #include <sqlite3.h>
 
-#include "Accounts.h"
-#include "Bank.h"
-#include "SQL.h"
+#include "accounts.h"
+#include "bank.h"
+#include "sql.h"
 
 int main(void) {
 
   SQL db;
-
+  // Open database
   sqlite3 *DB = db.sql_open();
-
+  // Create tables
   std::string sql = "CREATE TABLE IF NOT EXISTS ACCOUNTS("
                     "ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
                     "NAME           TEXT NOT NULL,"
@@ -30,9 +30,10 @@ int main(void) {
 
   db.sql_table_create(*DB, sql);
 
+  // Init accounts class and bank class
   Account account;
   Bank Op;
-
+  // Get users input
   int choice;
   std::cout << "Banking System" << std::endl;
   std::cout << "Main Menu" << std::endl;
@@ -58,6 +59,7 @@ int main(void) {
     account.account_delete(*DB);
     break;
   }
+  // Close Database
   db.sql_close(*DB);
   return 0;
 }
